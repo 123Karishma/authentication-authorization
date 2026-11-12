@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <%- include('../partials/head'); %>
+</head>
+
+<body class="container">
+
+
+    <main>
+        <form action="/home/edit/<%= note._id %>" method="POST">
+
+            <input type="text" name="title" value="<%= note.title %>" />
+
+            <textarea name="content"><%= note.content %></textarea>
+
+            <button type="submit">
+                Update
+            </button>
+
+        </form>
+    </main>
+
+
+
+</body>
+
+</html>

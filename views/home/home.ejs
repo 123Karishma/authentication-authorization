@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <%- include('../partials/head'); %>
+
+</head>
+
+<body class="container">
+
+    <main>
+
+        <!-- Notes Table -->
+        <div class="p-5 mb-4 bg-light rounded-3">
+
+            <!-- Hidden Form -->
+            <div id="noteForm" style="
+        display:none;
+        position:fixed;
+        top:50%;
+        left:50%;
+        transform:translate(-50%, -50%);
+        z-index:9999;
+        background:white;
+        padding:20px;
+        border-radius:10px;
+        box-shadow:0 0 10px rgba(0,0,0,0.2);
+        width:500px;
+    ">
+
+                <h4>Add Notes</h4>
+                <form action="/home" method="POST">
+
+                    <div class="mb-3">
+                        <input type="text" class="form-control" name="title" placeholder="Enter Title" required />
+                    </div>
+
+                    <div class="mb-3">
+                        <textarea class="form-control" name="content" placeholder="Enter Content" rows="4"
+                            required></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-success">
+                        Save Note
+                    </button>
+
+                </form>
+            </div>
+
+
+            <h1>Notes App</h1>
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h2>All Notes</h2>
+
+                <form action="/search" method="get">
+                    <input type="text" name="q" placeholder="Search products..." required />
+                    <button type="submit">Search</button>
+                </form>
+
+                <button class="btn btn-primary" onclick="toggleForm()">
+                    Add Note
+                </button>
+
+                <button class="btn btn-primary" onclick="logout()">
+                    Logout
+                </button>
+            </div>
+
+            <% if(findNotes && findNotes.length){ %>
+
+                <table class="table table-bordered table-striped">
+
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Title</th>
+                            <th>Content</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        <% findNotes.forEach((note,index)=>{ %>
+
+                            <tr>
+                                <td>
+                                    <%= index + 1 %>
+                                </td>
+
+                                <td>
+                                    <%= note.title %>
+                                </td>
+
+                                <td>
+                                    <%= note.content %>
+                                </td>
+
+                                <td>
+
+                                    <!-- Edit -->
+                                    <a href="/home/edit/<%= note._id %>" class="btn btn-warning btn-sm">
+                                        Edit
+                                    </a>
+
+                                    <!-- Delete -->
+                                    <form action="/home/delete/<%= note._id %>" method="POST" style="display:inline;">
+                                        <button type="submit" class="btn btn-danger btn-sm"
+                                            onclick="return confirm('Delete this note?')">
+                                            Delete
+                                        </button>
+                                    </form>
+
+                                </td>
+                            </tr>
+
+                            <% }) %>
+
+                    </tbody>
+
+                </table>
+
+
+
+                <div class="pagination">
+                    <% if (page> 1) { %>
+                        <a href="/home?page=<%= page - 1 %>&limit=<%= limit %>">
+                            Previous
+                        </a>
+                        <% } %>
+
+                            <span>Page <%= page %></span>
+
+                            <% if (hasNextPage) { %>
+                                <a href="/home?page=<%= page + 1 %>&limit=<%= limit %>">
+                                    Next
+                                </a>
+                                <% } %>
+                </div>
+
+                <% } else { %>
+
+                    <p>No notes found.</p>
+
+                    <% } %>
+        </div>
+
+    </main>
+
+    <script>
+        function toggleForm() {
+            const form = document.getElementById("noteForm");
+
+            if (form.style.display === "none") {
+                form.style.display = "block";
+            } else {
+                form.style.display = "none";
+            }
+        }
+
+        function logout() {
+            fetch('/logout', {
+                method: 'POST'
+            }).then(() => {
+                window.location.href = '/login';
+            });
+        }
+    </script>
+
+</body>
+
+</html>
